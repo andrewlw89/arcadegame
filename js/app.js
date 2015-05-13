@@ -46,7 +46,7 @@ Enemy.prototype.randomSpeed = function() {
     this.speed = 80 * (Math.floor(Math.random() * 10 + 1));
 }
 
-
+// Give all player objects an initial x coordinate of 200 and y coordinate of 400. Also set the default sprite image.
 var Player = function() {
     this.x = 200;
     this.y = 400;
@@ -61,6 +61,8 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+// When the player either reaches the water or has a collision, this function is called.
+// This function resets the player back to his initial positon and resets any boundary flags.
 Player.prototype.resetPlayer = function() {
     this.x = 200;
     this.y = 400;
@@ -68,12 +70,18 @@ Player.prototype.resetPlayer = function() {
     this.boundaryState.bottomBoundary = true;
 }
 
+// This function defines the boundary states using booleans. Because the player starts at the
+// bottom of the screen, the bottom boundary is initialzed as true. Left and right boundaries
+// stay false until the boundary is met.
 Player.prototype.boundaryState = function() {
     var rightBoundary = false;
     var leftBoundary = false;
     var bottomBoundary = true;
 }
 
+// This function checks the x and y coordinates to ensure the player has not reached a
+// boundary. If the players position hits a boundary, the boundary flag is changed to true
+// for whichever boundary that is.
 Player.prototype.checkForBoundary = function() {
     if (this.x === 0) {
         this.changeHorizontalBoundaryState(true, false);
@@ -92,11 +100,17 @@ Player.prototype.checkForBoundary = function() {
     }
 }
 
+// This function assigns the correct boolean to the correct boundaryState (leftBoundary or rightBoundary).
 Player.prototype.changeHorizontalBoundaryState = function(leftBoundaryState, rightBoundaryState) {
     this.boundaryState.leftBoundary = leftBoundaryState;
     this.boundaryState.rightBoundary = rightBoundaryState;
 }
 
+// This function handles any player input using the arrow keys. It defines the default step as 100 in the x
+// direction and 90 in the y direction. Before moving, a boundary check is done. If the player is at a boundary
+// then the boundary check changes the flag to true for that boundary. After each input, the function checks if
+// the boundary flag is true. If it is true, null is returned. If it is not true, the player is moved the amount
+// specified by the step length.
 Player.prototype.handleInput = function(key) {
     var stepHorizontalLength = 100;
     var stepVerticalLength = 90;
@@ -129,19 +143,22 @@ Player.prototype.handleInput = function(key) {
     }  
 }
 
-
-// Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-
 var allEnemies = [];
+
+// Create enemies using a 'for loop'. In this loop, do an initial calculation for a random speed.
+// Next, push the enemy into the array 'allEnemies' with an initial x coordinate of -120. Each enemy
+// will have a different y coordinate that is 80 units below the other starting at 60,
+// giving 3 rows of enemies.
 for (var i = 0; i < 3; i++) {
-    var initialSpeed = Math.floor(Math.random() * 5 + 1) * 75;
-    allEnemies.push(new Enemy(-120, 60 + 80 * i, initialSpeed));
+    var initialSpeed = 80 * (Math.floor(Math.random() * 10 + 1));
+    allEnemies.push(new Enemy(-120, 60 + (80 * i), initialSpeed));
 }
 
+// Create a new player object and initiate the boundaryState function
 var player = new Player();
 Player.prototype.boundaryState();
+
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
