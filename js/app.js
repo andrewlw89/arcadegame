@@ -1,110 +1,115 @@
 // Create an enemy class which has attributes for X and Y coordinates, a speed, and the sprite image.
 var Enemy = function(positionX, positionY, speed) {
+    'use strict';
     this.x = positionX;
     this.y = positionY;
     this.speed = speed;
     this.sprite = 'images/enemy-bug.png';
-}
+};
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-	
+	'use strict';
 	// This formula is derived from the physics formula for speed where position (S) is equal to the initial
 	// position (S sub 0) added to the product of the velocity (v) and time (t). S = S(0) + (v * t)
 	this.x = this.x + this.speed * dt;
-	
+
 	// Sets the right boundary at 550 and the initial position at -120. If the enemy hits an x coordinate of
 	// 550 then the enemy is reset back to -120 with a new randomly generated speed.
 	if (this.x > 550) {
 		this.x = -120;
 		this.randomSpeed();
 	}
-	
+
 	// Because this.x and this.y represent the center point for the enemy, we need to extend out the detection
 	// boundaries for when the player collides with the enemy
 	var enemyLeftBound = this.x - 60;
     var enemyRightBound = this.x + 60;
     var enemyTopBound = this.y - 60;
     var enemyBottomBound = this.y + 60;
-    
+
     // If the player's position is within the top, bottom, left, and right boundaries of the enemy
     // then we have a collision and the player is reset
     if (player.x < enemyRightBound && player.x > enemyLeftBound && player.y > enemyTopBound && player.y < enemyBottomBound) {
         player.resetPlayer();
     }
-}
+};
 
 Enemy.prototype.randomSpeed = function() {
+    'use strict';
 	// Generate a random number between 0 and 1, multiply that by 10, then add 1 (to ensure the number isn't 0).
 	// Finally, multiply that number by 80 to get the random speed.
     this.speed = 80 * (Math.floor(Math.random() * 10 + 1));
-}
+};
 
 // Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
+Enemy.prototype.render = function(ctx) {
+    'use strict';
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+};
 
 // Give all player objects an initial x coordinate of 200 and y coordinate of 400. Also set the default sprite image.
 var Player = function() {
+    'use strict';
     this.x = 200;
     this.y = 400;
     this.sprite = 'images/char-boy.png';
-}
+};
 
 Player.prototype.update = function() {
+    'use strict';
+};
 
-}
-
-Player.prototype.render = function() {
+Player.prototype.render = function(ctx) {
+    'use strict';
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+};
 
 // When the player either reaches the water or has a collision, this function is called.
 // This function resets the player back to his initial positon and resets any boundary flags.
 Player.prototype.resetPlayer = function() {
+    'use strict';
     this.x = 200;
     this.y = 400;
     this.changeHorizontalBoundaryState(false, false);
     this.boundaryState.bottomBoundary = true;
-}
+};
 
 // This function defines the boundary states using booleans. Because the player starts at the
 // bottom of the screen, the bottom boundary is initialzed as true. Left and right boundaries
 // stay false until the boundary is met.
 Player.prototype.boundaryState = function() {
+    'use strict';
     var rightBoundary = false;
     var leftBoundary = false;
     var bottomBoundary = true;
-}
+};
 
 // This function checks the x and y coordinates to ensure the player has not reached a
 // boundary. If the players position hits a boundary, the boundary flag is changed to true
 // for whichever boundary that is.
 Player.prototype.checkForBoundary = function() {
+    'use strict';
     if (this.x === 0) {
         this.changeHorizontalBoundaryState(true, false);
-    }
-    else if (this.x === 400) {
+    } else if (this.x === 400) {
         this.changeHorizontalBoundaryState(false, true);
-    }
-    else {
+    } else {
         this.changeHorizontalBoundaryState(false, false);
-    }
-    if (this.y === 400) {
+    } if (this.y === 400) {
         this.boundaryState.bottomBoundary = true;
-    }
-    else {
+    } else {
         this.boundaryState.bottomBoundary = false;
     }
-}
+};
 
 // This function assigns the correct boolean to the correct boundaryState (leftBoundary or rightBoundary).
 Player.prototype.changeHorizontalBoundaryState = function(leftBoundaryState, rightBoundaryState) {
+    'use strict';
     this.boundaryState.leftBoundary = leftBoundaryState;
     this.boundaryState.rightBoundary = rightBoundaryState;
-}
+};
 
 // This function handles any player input using the arrow keys. It defines the default step as 100 in the x
 // direction and 90 in the y direction. Before moving, a boundary check is done. If the player is at a boundary
@@ -112,6 +117,7 @@ Player.prototype.changeHorizontalBoundaryState = function(leftBoundaryState, rig
 // the boundary flag is true. If it is true, null is returned. If it is not true, the player is moved the amount
 // specified by the step length.
 Player.prototype.handleInput = function(key) {
+    'use strict';
     var horizontalStep = 100;
     var verticalStep = 90;
     this.checkForBoundary();
@@ -122,26 +128,23 @@ Player.prototype.handleInput = function(key) {
             return null;
         }
         this.y -= verticalStep;
-    }
-    else if (key === 'down') {
+    } else if (key === 'down') {
         if (this.boundaryState.bottomBoundary) {
             return null;
         }
         this.y += verticalStep;
-    }
-    else if (key === 'left') {
+    } else if (key === 'left') {
         if (this.boundaryState.leftBoundary) {
             return null;
         }
         this.x -= horizontalStep;
-    } 
-    else if (key === 'right') {
+    } else if (key === 'right') {
         if (this.boundaryState.rightBoundary) {
             return null;
         }
         this.x += horizontalStep;
-    }  
-}
+    }
+};
 
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [];
@@ -157,7 +160,7 @@ for (var i = 0; i < 3; i++) {
 
 // Create a new player object and initiate the boundaryState function
 var player = new Player();
-Player.prototype.boundaryState();
+player.boundaryState();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
