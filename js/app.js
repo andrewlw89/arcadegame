@@ -26,12 +26,95 @@ Enemy.prototype.render = function() {
 // a handleInput() method.
 
 
+var Player = function() {
+    this.x = 200;
+    this.y = 400;
+    this.sprite = 'images/char-boy.png';
+}
+
+Player.prototype.update = function() {
+
+}
+
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+Player.prototype.resetPlayerPosition = function() {
+    this.x = 200;
+    this.y = 400;
+    this.changeHorizontalBoundaryState(false, false);
+    this.boundaryState.bottomBoundary = true;
+}
+
+Player.prototype.boundaryState = function() {
+    var leftBoundary = false;
+    var rightBoundary = false;
+    var bottomBoundary = true;
+}
+
+Player.prototype.checkBoundary = function() {
+    if (this.x === 0) {
+        this.changeHorizontalBoundaryState(true, false);
+    } else if (this.x === 400) {
+        this.changeHorizontalBoundaryState(false, true);
+    } else {
+        this.changeHorizontalBoundaryState(false, false);
+    }
+    if (this.y === 400) {
+        this.boundaryState.bottomBoundary = true;
+    } else {
+        this.boundaryState.bottomBoundary = false;
+    }
+}
+
+Player.prototype.changeHorizontalBoundaryState = function(leftBoundaryState, rightBoundaryState) {
+    this.boundaryState.leftBoundary = leftBoundaryState;
+    this.boundaryState.rightBoundary = rightBoundaryState;
+}
+
+Player.prototype.handleInput = function(key) {
+    var stepHorizontalLength = 100;
+    var stepVerticalLength = 90;
+    this.checkBoundary();
+
+    if (key === 'up') {
+        if (this.y === 40) {
+            this.resetPlayerPosition();
+            return null;
+        }
+        this.y -= stepVerticalLength;
+    }
+    else if (key === 'down') {
+        if (this.boundaryState.bottomBoundary) {
+            return null;
+        }
+        this.y += stepVerticalLength;
+    }
+    else if (key === 'left') {
+        if (this.boundaryState.leftBoundary) {
+            return null;
+        }
+        this.x -= stepHorizontalLength;
+    } 
+    else if (key === 'right') {
+        if (this.boundaryState.rightBoundary) {
+            return null;
+        }
+        this.x += stepHorizontalLength;
+    }  
+}
+
+
+
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-
-
+var allEnemies = [];
+var player = new Player();
+Player.prototype.boundaryState();
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
