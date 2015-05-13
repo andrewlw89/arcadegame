@@ -35,15 +35,15 @@ Enemy.prototype.update = function(dt) {
     }
 }
 
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
-
 Enemy.prototype.randomSpeed = function() {
 	// Generate a random number between 0 and 1, multiply that by 10, then add 1 (to ensure the number isn't 0).
 	// Finally, multiply that number by 80 to get the random speed.
     this.speed = 80 * (Math.floor(Math.random() * 10 + 1));
+}
+
+// Draw the enemy on the screen, required method for game
+Enemy.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
 // Give all player objects an initial x coordinate of 200 and y coordinate of 400. Also set the default sprite image.
@@ -112,8 +112,8 @@ Player.prototype.changeHorizontalBoundaryState = function(leftBoundaryState, rig
 // the boundary flag is true. If it is true, null is returned. If it is not true, the player is moved the amount
 // specified by the step length.
 Player.prototype.handleInput = function(key) {
-    var stepHorizontalLength = 100;
-    var stepVerticalLength = 90;
+    var horizontalStep = 100;
+    var verticalStep = 90;
     this.checkForBoundary();
 
     if (key === 'up') {
@@ -121,25 +121,25 @@ Player.prototype.handleInput = function(key) {
             this.resetPlayer();
             return null;
         }
-        this.y -= stepVerticalLength;
+        this.y -= verticalStep;
     }
     else if (key === 'down') {
         if (this.boundaryState.bottomBoundary) {
             return null;
         }
-        this.y += stepVerticalLength;
+        this.y += verticalStep;
     }
     else if (key === 'left') {
         if (this.boundaryState.leftBoundary) {
             return null;
         }
-        this.x -= stepHorizontalLength;
+        this.x -= horizontalStep;
     } 
     else if (key === 'right') {
         if (this.boundaryState.rightBoundary) {
             return null;
         }
-        this.x += stepHorizontalLength;
+        this.x += horizontalStep;
     }  
 }
 
